@@ -5,34 +5,24 @@
   "main": "index.js",
   "scripts": {
     "build": "tsc",
-    "migration": "ts-node ./migration migration",
-    "rollback": "ts-node ./migration rollback",
-    "local": "ts-node app.ts",
-    "start": "pm2 start dist/app.js",
-    "logs": "pm2 logs",
-    "stop": "pm2 stop app",
-    "delete": "pm2 delete app",
-    "status": "pm2 status"
+    "local": "ts-node src/index.ts"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@types/decompress": "^4.2.4",
     "axios": "^1.5.0",
     "csvtojson": "^2.0.10",
     "decompress": "^4.2.1",
     "dotenv": "^16.3.1",
-    "pg": "^8.11.3",
-    "pm2": "^5.3.0",
+    "mysql2": "^3.6.1",
+    "playwright": "^1.38.0",
     "sequelize": "^6.33.0",
     "winston": "^3.10.0"
   },
   "devDependencies": {
-    "@playwright/test": "^1.38.0",
-    "@types/csvtojson": "^2.0.0",
+    "@types/decompress": "^4.2.4",
     "@types/node": "^20.6.1",
-    "liquibase": "^4.4.0",
     "ts-node": "^10.9.1"
   }
 }

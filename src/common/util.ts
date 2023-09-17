@@ -1,9 +1,9 @@
-import axios from "axios"
-import { randomUUID } from "crypto"
+import axios from 'axios'
+import { randomUUID } from 'crypto'
 import csvtojson from 'csvtojson'
-import decompress from "decompress"
-import { createWriteStream, unlinkSync } from "fs"
-import logger from './logger'
+import decompress from 'decompress'
+import { createWriteStream, unlinkSync } from 'fs'
+import logger from '../logger'
 
 export function wait(duration: number) {
     return new Promise((resolve, reject) => {
@@ -22,7 +22,7 @@ export async function downloadFile(fileUrl: string) {
         const tempFilename = `.${randomUUID()}`
         const writeStream = createWriteStream(tempFilename)
         writeStream.on('close', () => {
-            decompress(tempFilename, ".").then((files) => {
+            decompress(tempFilename, '.').then((files) => {
                 resolve(files.map(f => f.path))
             }).catch(err => {
                 logger.error('Error whiling decompressing', err)
@@ -39,6 +39,6 @@ export async function downloadFile(fileUrl: string) {
     })
 }
 
-export async function readCsvAsJSON(csvFile: string) {
+export async function readCSVAsJSON(csvFile: string) {
     return await csvtojson().fromFile(csvFile)
 }

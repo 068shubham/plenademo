@@ -1,22 +1,29 @@
 import { Sequelize } from 'sequelize'
 import logger from '../logger'
 
-if (!process.env.POSTGRES_CONFIG) {
-    throw new Error('Please provide valid POSTGRES_CONFIG')
-}
-const { host, port, database, password, username, connectionTimeout = 10000, ssl = true } = JSON.parse(process.env.POSTGRES_CONFIG)
-
 export class DatabaseManager {
     initialised = false
     connection: Sequelize
+    mysqlConfig: any
+
     constructor() {
+        if (!process.env.MYSQL_CONFIG) {
+            throw new Error('Please provide valid MYSQL_CONFIG')
+        }
+        try {
+            this.mysqlConfig = JSON.parse(process.env.MYSQL_CONFIG)
+        } catch (err: any) {
+            logger.error(`Error parsing MYSQL_CONFIG: ${process.env.MYSQL_CONFIG}`, err)
+            throw 'MYSQL_CONFIG has invalid JSON.'
+        }
+        const { host, port, database, password, username, connectTimeout = 10000, ssl = true } = this.mysqlConfig
         this.connection = new Sequelize({
-            dialect: 'postgres',
+            dialect: 'mysql',
             host, port, database, username, password,
             ssl,
             dialectOptions: {
                 ssl: ssl ? { require: true, rejectUnauthorized: false } : undefined,
-                connectionTimeout
+                connectTimeout
             },
             logging: false,
             retry: {
