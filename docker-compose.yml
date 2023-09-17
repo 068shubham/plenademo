@@ -1,0 +1,12 @@
+version: '3.8'
+services:
+  postgres:
+    image: postgres:15.3
+    restart: always
+    ports:
+      - '5402:5432'
+    environment:
+      POSTGRES_USER: plenademo
+      POSTGRES_PASSWORD: 'plenademo'
+      POSTGRES_HOST_AUTH_METHOD: trust
+    network_mode: bridge
