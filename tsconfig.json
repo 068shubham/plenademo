@@ -10,8 +10,7 @@
         "resolveJsonModule": true
     },
     "exclude": [
-        "./node_modules",
-        "./migration",
-        "./*.ts"
+        "node_modules",
+        "dist"
     ]
 }

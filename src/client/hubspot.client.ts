@@ -32,7 +32,7 @@ export class HubSpotCreateContactRequest {
     }
 }
 
-export async function createContact(rawList: any[]) {
+export async function createContact(rawList: KaggleBabyName[]) {
     const startMillis = Date.now()
     try {
         const inputs = rawList.map(raw => new HubSpotCreateContactRequest(raw))

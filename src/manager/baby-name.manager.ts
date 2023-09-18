@@ -24,7 +24,7 @@ export class BabyNameManager {
     }
 
     /**
-     * Logsin to kaggle, downloads baby names csv and parses to JSON
+     * Login to kaggle, download baby names csv and parse to JSON
      * @param username 
      * @param password 
      * @returns List of raw baby names
@@ -37,7 +37,7 @@ export class BabyNameManager {
             const jsonData = await readCSVAsJSON(filePath)
             unlinkSync(filePath)
             return jsonData.map(j => new KaggleBabyName(j))
-        } catch (err: any) {
+        } catch (err: unknown) {
             logger.error('Error in extractBabyNames', err)
             throw err
         }
@@ -47,7 +47,7 @@ export class BabyNameManager {
      * Persists names to db and creates contacts in hubspot
      * @param rawNames List of raw baby names
      */
-    async processBabyNames(rawNames: any[]) {
+    async processBabyNames(rawNames: KaggleBabyName[]) {
         logger.info(`Total ${rawNames.length} records to process`)
         await Promise.all([
             this.saveBabyNamesInDatabase(Object.assign([], rawNames)),
@@ -56,7 +56,7 @@ export class BabyNameManager {
     }
 
     /**
-     * Saves the babyNames in the db in batches
+     * Save the babyNames in the database in batches
      * @param babyNames list of baby names in raw form
      * @returns list of names for which db write failed
      */
@@ -90,13 +90,14 @@ export class BabyNameManager {
                 promises.push(createContact(chunk))
             }
             const responses = await Promise.all(promises)
-            for (let failures of responses) {
+            for (const failures of responses) {
                 if (failures.length > 0) {
                     failedMessages.push(...failures)
                 }
             }
         }
         // Todo: Add retries
+        logger.error(`Total ${failedMessages.length} records failed in pushToHubspot`)
         return failedMessages
     }
 

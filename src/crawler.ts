@@ -1,4 +1,3 @@
-
 import { chromium } from 'playwright'
 import databaseManager from './database'
 import { BabyNameManager } from './manager/baby-name.manager'

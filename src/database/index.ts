@@ -1,10 +1,20 @@
 import { Sequelize } from 'sequelize'
 import logger from '../logger'
 
+interface MySqlConfig {
+    host: string
+    port: number
+    database: string
+    username: string
+    password: string
+    connectTimeout: number
+    ssl: boolean
+}
+
 export class DatabaseManager {
     initialised = false
     connection: Sequelize
-    mysqlConfig: any
+    mysqlConfig: MySqlConfig
 
     constructor() {
         if (!process.env.MYSQL_CONFIG) {
@@ -12,7 +22,7 @@ export class DatabaseManager {
         }
         try {
             this.mysqlConfig = JSON.parse(process.env.MYSQL_CONFIG)
-        } catch (err: any) {
+        } catch (err: unknown) {
             logger.error(`Error parsing MYSQL_CONFIG: ${process.env.MYSQL_CONFIG}`, err)
             throw 'MYSQL_CONFIG has invalid JSON.'
         }

@@ -6,7 +6,8 @@ import { createWriteStream, unlinkSync } from 'fs'
 import logger from '../logger'
 
 export function wait(duration: number) {
-    return new Promise((resolve, reject) => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    return new Promise((resolve, _) => {
         setTimeout(resolve, duration)
     })
 }
@@ -17,25 +18,29 @@ export function getFilenameFromUrl(fileUrl: string) {
 }
 
 export async function downloadFile(fileUrl: string) {
-    return new Promise<string[]>(async (resolve, reject) => {
-        const response = await axios.get(fileUrl, { responseType: 'stream' })
-        const tempFilename = `.${randomUUID()}`
-        const writeStream = createWriteStream(tempFilename)
-        writeStream.on('close', () => {
-            decompress(tempFilename, '.').then((files) => {
-                resolve(files.map(f => f.path))
-            }).catch(err => {
-                logger.error('Error whiling decompressing', err)
-                reject(err)
-            }).finally(() => {
-                unlinkSync(tempFilename)
+    return new Promise<string[]>((resolve, reject) => {
+        axios.get(fileUrl, { responseType: 'stream' }).then(response => {
+            const tempFilename = `.${randomUUID()}`
+            const writeStream = createWriteStream(tempFilename)
+            writeStream.on('close', () => {
+                decompress(tempFilename, '.').then((files) => {
+                    resolve(files.map(f => f.path))
+                }).catch(err => {
+                    logger.error('Error whiling decompressing', err)
+                    reject(err)
+                }).finally(() => {
+                    unlinkSync(tempFilename)
+                })
             })
-        })
-        writeStream.on('error', (err) => {
-            logger.error('Error whiling downloading', err)
+            writeStream.on('error', (err) => {
+                logger.error('Error whiling writing', err)
+                reject(err)
+            })
+            response.data.pipe(writeStream)
+        }).catch(err => {
+            logger.error('Error downloading', err)
             reject(err)
         })
-        response.data.pipe(writeStream)
     })
 }
 
